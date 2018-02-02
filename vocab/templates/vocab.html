@@ -84,12 +84,56 @@
     <label for="attempt">Word:</label>
     <input id="attempt" name="attempt" type="text" width="15"
       autocomplete="off"  autofocus />
-    <input type="submit" name="try" />
+<!--    <input type="submit" name="try" />  submit button-->
   </form>
 </div></div>
 
 <br />
 
+<!-- start my additions -->
+<h2 id="found"> </h2>
+<p id="matches"> </p>
+<h3 id="finished"> </h3>
+<p id="messages" class="message"> </p>
+
+<script>
+// Suppress normal form submission
+$("#entry").submit(function(event) 
+{
+   event.preventDefault();
+});
+  
+$("#attempt").keyup(function(event) 
+{
+   var txt = $("#attempt").val();  // Current content of the input field
+//   var keycode = event.which;      // They key that just went up
+//   var letter = String.fromCharCode(keycode);
+
+   $.getJSON("/_check", {text: txt},
+            function(data)
+            {
+                rsval = data.result;
+                if (rsval.msg)
+                {
+                    $("#message").html(rsval.msg);
+                }
+                else if (rsval.matches)
+                {
+                    $("#found").html("You found");
+                    //$("#matches").html(rsval.matches);
+                    $("#matches").append(rsval.matches + " ");
+                    $("#attempt").val("");
+                    
+                    if (rsval.done)
+                    {
+                        $("#finished").html("You have found enough words. Refresh to try again with different letters.")
+                    }
+                }
+            });
+});
+</script>
+
+<!--
 {% if session.matches|length is not equalto 0  %}
 <h2>You found </h2>
 <p id="results">
@@ -102,13 +146,15 @@
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}
+-->
     <!-- Mismatch, already found, etc. "flashed" from Python -->
+<!--
     {% for message in messages %}
       <p class="message">{{ message }}</p>
     {% endfor %}
   {% endif %}
 {% endwith %}
-
+-->
 
 
  </div> <!-- container -->
